@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry including="shaders/blur.fragment|shaders/blur.vertex|shaders/camerablur.fragment|shaders/combine.fragment|shaders/convolve-1d.fragment|shaders/copy.fragment|shaders/crt-screen.fragment|shaders/fxaa.fragment|shaders/nfaa.fragment|shaders/radial-blur.fragment|shaders/radial-blur.vertex|shaders/radial-distortion.fragment|shaders/screenspace.vertex|shaders/threshold.fragment|shaders/vignetting.fragment|shaders/zoom.fragment|shaders/zoom.vertex" kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/libgdx-contribs-utils"/>
+	<classpathentry kind="lib" path="lib/gdx-1.6.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

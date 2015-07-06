@@ -2,6 +2,7 @@
 */release
 *.so
 *.log
+*.iml
 *.class
 */.ant*
 target/

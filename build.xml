@@ -4,7 +4,7 @@
 	<property name="version" value="${package.version}" />
 
 	<!-- props -->
-	<property name="api.dir" value="." />
+	<property name="api.dir" value="postprocessing/" />
 	<property name="api.name" value="postprocessing" />
 
 	<!-- TASKS -->
@@ -23,9 +23,9 @@
 	<!-- compile -->
 	<target name="compile" depends="init">
 		<javac target="1.6" source="1.6" debug="on" srcdir="${api.dir}/src/" destdir="${api.dir}/bin/">
-			<src path="../utils/src/main/java/" />
+			<src path="utils/src/main/java/" />
 			<classpath>
-				<fileset dir="/home/tsagrista/git/libgdx/gdx">
+				<fileset dir="../gaiasandbox/core/libs">
 					<include name="gdx.jar" />
 				</fileset>
 			</classpath>
@@ -35,7 +35,9 @@
 	<!-- package -->
 	<target name="package" depends="compile">
 		<!-- api -->
-		<jar destfile="${api.dir}/release/${api.name}.jar" basedir="${api.dir}/bin" />
+		<jar destfile="${api.dir}/release/${api.name}.jar" basedir="${api.dir}/bin" >
+			<!-- <fileset dir="src/main/resources" /> -->    
+		</jar>
 		<jar destfile="${api.dir}/release/${api.name}-sources.jar" basedir="${api.dir}/src/main/java">
 			<fileset dir="../utils/src/" />
 		</jar>
