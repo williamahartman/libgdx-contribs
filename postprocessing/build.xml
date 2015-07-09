@@ -39,8 +39,16 @@
 			<fileset dir="${base.dir}/bin">
 				<!-- Code -->
 				<include name="com/**" />
-				<include name="shaders/**" />
+				<exclude name="**/*.gwt.xml" />
 			</fileset>
+		</jar>
+		<jar destfile="${base.dir}/postprocessing-sources.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Application-Name" value="Libgdx-postprocessing" />
+				<attribute name="Application-Version" value="${repository.tag} ${TODAY}" />
+				<attribute name="Application-Vendor" value="ARI - ZAH - Heidelberg Universität" />
+			</manifest>
 
 			<fileset dir="${base.dir}/src/main/java">
 				<include name="**" />
