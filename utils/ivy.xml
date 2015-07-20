@@ -3,7 +3,7 @@
     <!ENTITY gdx.version "1.6.4">
 ]>
 <ivy-module version="2.0">
-  <info organisation="com.bitfire.postprocessing" module="libgdx-postprocessing"/>
+  <info organisation="com.bitfire.utils" module="libgdx-contribs-utils"/>
   <dependencies>
     <dependency org="com.badlogicgames.gdx" name="gdx" rev="&gdx.version;" conf="default"/>
   </dependencies>
