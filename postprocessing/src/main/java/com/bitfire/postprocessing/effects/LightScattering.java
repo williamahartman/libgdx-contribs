@@ -179,6 +179,22 @@ public final class LightScattering extends PostProcessorEffect {
 
 	}
 
+	public void setDecay (float decay) {
+		scattering.setDecay(decay);
+	}
+
+	public void setDensity (float density) {
+		scattering.setDensity(density);
+	}
+
+	public void setWeight (float weight) {
+		scattering.setWeight(weight);
+	}
+
+	public void setNumSamples (int numSamples) {
+		scattering.setNumSamples(numSamples);
+	}
+
 	public void setBlurPasses (int passes) {
 		blur.setPasses(passes);
 	}
