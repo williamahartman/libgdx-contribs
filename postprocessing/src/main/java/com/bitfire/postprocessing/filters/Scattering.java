@@ -15,6 +15,7 @@
 
 package com.bitfire.postprocessing.filters;
 
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.utils.ShaderLoader;
 
 /** Scattering Light effect.
@@ -24,6 +25,7 @@ import com.bitfire.utils.ShaderLoader;
 public final class Scattering extends Filter<Scattering> {
 	// Number of light supported
 	public static int N = 10;
+	private Vector2 viewport;
 
 	private float[] lightPositions;
 	private int nLights;
@@ -39,8 +41,8 @@ public final class Scattering extends Filter<Scattering> {
 
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture("u_texture0", 0), LightPositions("u_lightPositions", 2), NLights("u_nLights", 0), Decay("u_decay",
-			0), Density("u_density", 0), Weight("u_weight", 0), NumSamples("u_numSamples", 0);
+		Texture("u_texture0", 0), LightPositions("u_lightPositions", 2), Viewport("u_viewport", 2), NLights("u_nLights",
+			0), Decay("u_decay", 0), Density("u_density", 0), Weight("u_weight", 0), NumSamples("u_numSamples", 0);
 		// @formatter:on
 
 		private String mnemonic;
@@ -62,10 +64,16 @@ public final class Scattering extends Filter<Scattering> {
 		}
 	}
 
-	public Scattering () {
+	public Scattering (int width, int height) {
 		super(ShaderLoader.fromFile("screenspace", "lightscattering"));
 		lightPositions = new float[N * 2];
+		viewport = new Vector2(width, height);
 		rebind();
+	}
+
+	public void setViewportSize (float width, float height) {
+		this.viewport.set(width, height);
+		setParam(Param.Viewport, this.viewport);
 	}
 
 	public void setLightPositions (int nLights, float[] vec) {
@@ -116,6 +124,7 @@ public final class Scattering extends Filter<Scattering> {
 		// Re-implement super to batch every parameter
 		setParams(Param.Texture, u_texture0);
 		setParams(Param.NLights, this.nLights);
+		setParams(Param.Viewport, viewport);
 		setParamsv(Param.LightPositions, lightPositions, 0, N * 2);
 		setParams(Param.Decay, decay);
 		setParams(Param.Density, density);

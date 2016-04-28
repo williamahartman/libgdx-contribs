@@ -45,11 +45,8 @@ public final class LightScattering extends PostProcessorEffect {
 		public final float baseIntensity;
 		public final float baseSaturation;
 
-		public final int ghosts;
-		public final float haloWidth;
-
 		public Settings (String name, BlurType blurType, int blurPasses, float blurAmount, float bias, float baseIntensity,
-			float baseSaturation, float scatteringIntensity, float scatteringSaturation, int ghosts, float haloWidth) {
+			float baseSaturation, float scatteringIntensity, float scatteringSaturation) {
 			this.name = name;
 			this.blurType = blurType;
 			this.blurPasses = blurPasses;
@@ -61,15 +58,13 @@ public final class LightScattering extends PostProcessorEffect {
 			this.scatteringIntensity = scatteringIntensity;
 			this.scatteringSaturation = scatteringSaturation;
 
-			this.ghosts = ghosts;
-			this.haloWidth = haloWidth;
 		}
 
 		// simple blur
 		public Settings (String name, int blurPasses, float bias, float baseIntensity, float baseSaturation,
-			float scatteringIntensity, float scatteringSaturation, int ghosts, float haloWidth) {
+			float scatteringIntensity, float scatteringSaturation) {
 			this(name, BlurType.Gaussian5x5b, blurPasses, 0, bias, baseIntensity, baseSaturation, scatteringIntensity,
-				scatteringSaturation, ghosts, haloWidth);
+				scatteringSaturation);
 		}
 
 		public Settings (Settings other) {
@@ -83,9 +78,6 @@ public final class LightScattering extends PostProcessorEffect {
 			this.baseSaturation = other.baseSaturation;
 			this.scatteringIntensity = other.scatteringIntensity;
 			this.scatteringSaturation = other.scatteringSaturation;
-
-			this.ghosts = other.ghosts;
-			this.haloWidth = other.haloWidth;
 
 		}
 	}
@@ -105,12 +97,12 @@ public final class LightScattering extends PostProcessorEffect {
 	public LightScattering (int fboWidth, int fboHeight) {
 		pingPongBuffer = PostProcessor.newPingPongBuffer(fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false);
 
-		scattering = new Scattering();
+		scattering = new Scattering(fboWidth, fboHeight);
 		blur = new Blur(fboWidth, fboHeight);
 		bias = new Bias();
 		combine = new Combine();
 
-		setSettings(new Settings("default", 2, -0.9f, 1f, 1f, 0.7f, 1f, 8, 0.5f));
+		setSettings(new Settings("default", 2, -0.9f, 1f, 1f, 0.7f, 1f));
 	}
 
 	@Override
