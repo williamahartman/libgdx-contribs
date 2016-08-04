@@ -45,8 +45,10 @@ public final class AnaglyphicFilter extends Filter<AnaglyphicFilter> {
     @Override
     protected void onBeforeRender() {
         //inputTexture.bind(u_texture0);
-        textureLeft.bind(u_texture0);
-        textureRight.bind(u_texture1);
+        if (textureLeft != null)
+            textureLeft.bind(u_texture0);
+        if (textureRight != null)
+            textureRight.bind(u_texture1);
     }
 
     public void setTextureLeft(Texture tex) {
