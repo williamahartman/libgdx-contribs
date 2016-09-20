@@ -15,6 +15,7 @@
 
 package com.bitfire.postprocessing.filters;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.utils.ShaderLoader;
 
@@ -22,7 +23,7 @@ import com.bitfire.utils.ShaderLoader;
  * @see <a href="https://medium.com/community-play-3d/god-rays-whats-that-5a67f26aeac2">https://medium.com/community-play-3d/god-
  *      rays-whats-that-5a67f26aeac2</a>
  * @author Toni Sagrista **/
-public final class Scattering extends Filter<Scattering> {
+public final class Glow extends Filter<Glow> {
 	// Number of light supported
 	public static int N = 10;
 	private Vector2 viewport;
@@ -30,6 +31,8 @@ public final class Scattering extends Filter<Scattering> {
 	private float[] lightPositions;
 	private float[] lightViewAngles;
 	private int nLights;
+
+	private Texture lightGlowTexture;
 
 	private float decay = 0.96815f;
 	private float density = 0.926f;
@@ -42,8 +45,8 @@ public final class Scattering extends Filter<Scattering> {
 
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture("u_texture0", 0), LightPositions("u_lightPositions", 2), LightViewAngles("u_lightViewAngles", 1), Viewport(
-			"u_viewport", 2), NLights("u_nLights",
+		Texture("u_texture0", 0), LightGlowTexture("u_texture1", 0), LightPositions("u_lightPositions", 2), LightViewAngles(
+			"u_lightViewAngles", 1), Viewport("u_viewport", 2), NLights("u_nLights",
 				0), Decay("u_decay", 0), Density("u_density", 0), Weight("u_weight", 0), NumSamples("u_numSamples", 0);
 		// @formatter:on
 
@@ -66,8 +69,8 @@ public final class Scattering extends Filter<Scattering> {
 		}
 	}
 
-	public Scattering (int width, int height) {
-		super(ShaderLoader.fromFile("screenspace", "lightscattering"));
+	public Glow (int width, int height) {
+		super(ShaderLoader.fromFile("screenspace", "lightglow"));
 		lightPositions = new float[N * 2];
 		lightViewAngles = new float[N];
 		viewport = new Vector2(width, height);
@@ -79,9 +82,9 @@ public final class Scattering extends Filter<Scattering> {
 		setParam(Param.Viewport, this.viewport);
 	}
 
-	public void setLightPositions (int nLights, float[] pos) {
+	public void setLightPositions (int nLights, float[] vec) {
 		this.nLights = nLights;
-		this.lightPositions = pos;
+		this.lightPositions = vec;
 		setParam(Param.NLights, this.nLights);
 		setParamv(Param.LightPositions, this.lightPositions, 0, N * 2);
 	}
@@ -89,6 +92,11 @@ public final class Scattering extends Filter<Scattering> {
 	public void setLightViewAngles (float[] ang) {
 		this.lightViewAngles = ang;
 		setParamv(Param.LightViewAngles, this.lightViewAngles, 0, N);
+	}
+
+	public void setLightGlowTexture (Texture tex) {
+		lightGlowTexture = tex;
+		setParam(Param.LightGlowTexture, u_texture1);
 	}
 
 	public float getDecay () {
@@ -105,6 +113,10 @@ public final class Scattering extends Filter<Scattering> {
 
 	public int getNumSamples () {
 		return numSamples;
+	}
+
+	public Texture getLightGlowTexture () {
+		return lightGlowTexture;
 	}
 
 	public void setDecay (float decay) {
@@ -131,6 +143,7 @@ public final class Scattering extends Filter<Scattering> {
 	public void rebind () {
 		// Re-implement super to batch every parameter
 		setParams(Param.Texture, u_texture0);
+		setParams(Param.LightGlowTexture, u_texture1);
 		setParams(Param.NLights, this.nLights);
 		setParams(Param.Viewport, viewport);
 		setParamsv(Param.LightPositions, lightPositions, 0, N * 2);
@@ -145,5 +158,6 @@ public final class Scattering extends Filter<Scattering> {
 	@Override
 	protected void onBeforeRender () {
 		inputTexture.bind(u_texture0);
+		if (lightGlowTexture != null) lightGlowTexture.bind(u_texture1);
 	}
 }

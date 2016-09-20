@@ -23,69 +23,50 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.Bias;
-import com.bitfire.postprocessing.filters.Blur;
-import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.postprocessing.filters.Combine;
-import com.bitfire.postprocessing.filters.Scattering;
+import com.bitfire.postprocessing.filters.Glow;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 
 /** Light scattering implementation.
  * @author Toni Sagrista */
-public final class LightScattering extends PostProcessorEffect {
+public final class LightGlow extends PostProcessorEffect {
 	public static class Settings {
 		public final String name;
 
-		public final BlurType blurType;
-		public final int blurPasses; // simple blur
-		public final float blurAmount; // normal blur (1 pass)
 		public final float bias;
 
-		public final float scatteringIntensity;
-		public final float scatteringSaturation;
+		public final float glowIntensity;
+		public final float glowSaturation;
 		public final float baseIntensity;
 		public final float baseSaturation;
 
-		public Settings (String name, BlurType blurType, int blurPasses, float blurAmount, float bias, float baseIntensity,
-			float baseSaturation, float scatteringIntensity, float scatteringSaturation) {
+		public Settings (String name, float bias, float baseIntensity, float baseSaturation, float glowIntensity,
+			float glowSaturation) {
 			this.name = name;
-			this.blurType = blurType;
-			this.blurPasses = blurPasses;
-			this.blurAmount = blurAmount;
 
 			this.bias = bias;
 			this.baseIntensity = baseIntensity;
 			this.baseSaturation = baseSaturation;
-			this.scatteringIntensity = scatteringIntensity;
-			this.scatteringSaturation = scatteringSaturation;
+			this.glowIntensity = glowIntensity;
+			this.glowSaturation = glowSaturation;
 
-		}
-
-		// simple blur
-		public Settings (String name, int blurPasses, float bias, float baseIntensity, float baseSaturation,
-			float scatteringIntensity, float scatteringSaturation) {
-			this(name, BlurType.Gaussian5x5b, blurPasses, 0, bias, baseIntensity, baseSaturation, scatteringIntensity,
-				scatteringSaturation);
 		}
 
 		public Settings (Settings other) {
 			this.name = other.name;
-			this.blurType = other.blurType;
-			this.blurPasses = other.blurPasses;
-			this.blurAmount = other.blurAmount;
 
 			this.bias = other.bias;
 			this.baseIntensity = other.baseIntensity;
 			this.baseSaturation = other.baseSaturation;
-			this.scatteringIntensity = other.scatteringIntensity;
-			this.scatteringSaturation = other.scatteringSaturation;
+			this.glowIntensity = other.glowIntensity;
+			this.glowSaturation = other.glowSaturation;
 
 		}
 	}
 
 	private PingPongBuffer pingPongBuffer;
 
-	private Scattering scattering;
-	private Blur blur;
+	private Glow glow;
 	private Bias bias;
 	private Combine combine;
 
@@ -94,32 +75,30 @@ public final class LightScattering extends PostProcessorEffect {
 	private boolean blending = false;
 	private int sfactor, dfactor;
 
-	public LightScattering (int fboWidth, int fboHeight) {
+	public LightGlow (int fboWidth, int fboHeight) {
 		pingPongBuffer = PostProcessor.newPingPongBuffer(fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false);
 
-		scattering = new Scattering(fboWidth, fboHeight);
-		blur = new Blur(fboWidth, fboHeight);
+		glow = new Glow(fboWidth, fboHeight);
 		bias = new Bias();
 		combine = new Combine();
 
-		setSettings(new Settings("default", 2, -0.9f, 1f, 1f, 0.7f, 1f));
+		setSettings(new Settings("default", -0.9f, 1f, 1f, 0.7f, 1f));
 	}
 
 	@Override
 	public void dispose () {
 		combine.dispose();
 		bias.dispose();
-		blur.dispose();
 		pingPongBuffer.dispose();
 	}
 
 	/** Sets the positions of the 10 lights in [0..1] in both coordinates **/
 	public void setLightPositions (int nLights, float[] vec) {
-		scattering.setLightPositions(nLights, vec);
+		glow.setLightPositions(nLights, vec);
 	}
 
 	public void setLightViewAngles (float[] vec) {
-		scattering.setLightViewAngles(vec);
+		glow.setLightViewAngles(vec);
 	}
 
 	public void setBaseIntesity (float intensity) {
@@ -152,10 +131,6 @@ public final class LightScattering extends PostProcessorEffect {
 		this.blending = false;
 	}
 
-	public void setBlurType (BlurType type) {
-		blur.setType(type);
-	}
-
 	public void setSettings (Settings settings) {
 		this.settings = settings;
 
@@ -165,38 +140,33 @@ public final class LightScattering extends PostProcessorEffect {
 		// setup combine filter
 		setBaseIntesity(settings.baseIntensity);
 		setBaseSaturation(settings.baseSaturation);
-		setScatteringIntesity(settings.scatteringIntensity);
-		setScatteringSaturation(settings.scatteringSaturation);
-
-		// setup blur filter
-		setBlurPasses(settings.blurPasses);
-		setBlurAmount(settings.blurAmount);
-		setBlurType(settings.blurType);
+		setScatteringIntesity(settings.glowIntensity);
+		setScatteringSaturation(settings.glowSaturation);
 
 	}
 
 	public void setDecay (float decay) {
-		scattering.setDecay(decay);
+		glow.setDecay(decay);
 	}
 
 	public void setDensity (float density) {
-		scattering.setDensity(density);
+		glow.setDensity(density);
 	}
 
 	public void setWeight (float weight) {
-		scattering.setWeight(weight);
+		glow.setWeight(weight);
 	}
 
 	public void setNumSamples (int numSamples) {
-		scattering.setNumSamples(numSamples);
+		glow.setNumSamples(numSamples);
 	}
 
-	public void setBlurPasses (int passes) {
-		blur.setPasses(passes);
+	public void setLightGlowTexture (Texture tex) {
+		glow.setLightGlowTexture(tex);
 	}
 
-	public void setBlurAmount (float amount) {
-		blur.setAmount(amount);
+	public Texture getLightGlowTexture () {
+		return glow.getLightGlowTexture();
 	}
 
 	public float getBias () {
@@ -231,20 +201,8 @@ public final class LightScattering extends PostProcessorEffect {
 		return dfactor;
 	}
 
-	public BlurType getBlurType () {
-		return blur.getType();
-	}
-
 	public Settings getSettings () {
 		return settings;
-	}
-
-	public int getBlurPasses () {
-		return blur.getPasses();
-	}
-
-	public float getBlurAmount () {
-		return blur.getAmount();
 	}
 
 	@Override
@@ -259,12 +217,8 @@ public final class LightScattering extends PostProcessorEffect {
 			// apply bias
 			bias.setInput(texsrc).setOutput(pingPongBuffer.getSourceBuffer()).render();
 
-			scattering.setInput(pingPongBuffer.getSourceBuffer()).setOutput(pingPongBuffer.getResultBuffer()).render();
+			glow.setInput(pingPongBuffer.getSourceBuffer()).setOutput(pingPongBuffer.getResultBuffer()).render();
 
-			pingPongBuffer.set(pingPongBuffer.getResultBuffer(), pingPongBuffer.getSourceBuffer());
-
-			// blur pass
-			blur.render(pingPongBuffer);
 		}
 		pingPongBuffer.end();
 
@@ -284,7 +238,7 @@ public final class LightScattering extends PostProcessorEffect {
 
 	@Override
 	public void rebind () {
-		blur.rebind();
+		glow.rebind();
 		bias.rebind();
 		combine.rebind();
 		pingPongBuffer.rebind();
