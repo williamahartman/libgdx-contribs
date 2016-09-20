@@ -145,22 +145,6 @@ public final class LightGlow extends PostProcessorEffect {
 
 	}
 
-	public void setDecay (float decay) {
-		glow.setDecay(decay);
-	}
-
-	public void setDensity (float density) {
-		glow.setDensity(density);
-	}
-
-	public void setWeight (float weight) {
-		glow.setWeight(weight);
-	}
-
-	public void setNumSamples (int numSamples) {
-		glow.setNumSamples(numSamples);
-	}
-
 	public void setLightGlowTexture (Texture tex) {
 		glow.setLightGlowTexture(tex);
 	}

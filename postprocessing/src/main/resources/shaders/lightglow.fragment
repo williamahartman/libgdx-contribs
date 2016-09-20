@@ -17,14 +17,25 @@ varying vec2 v_texCoords;
 uniform vec2 u_lightPositions[10];
 uniform float u_lightViewAngles[10];
 
-uniform float u_decay;
-uniform float u_density;
-uniform float u_weight;
-uniform int u_numSamples;
 uniform int u_nLights;
+
+#define n_samples 10
 
 float len(vec2 vect, float ar){
 	return sqrt(vect.x * vect.x * ar * ar + vect.y * vect.y);
+}
+
+// Computes luminance of rgba color
+float lum(vec4 color){
+	return (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) * color.a;
+}
+
+float fx(float t){
+	return t * cos(t);
+}
+
+float fy(float t){
+	return t * sin(t);
 }
 
 void main()
@@ -33,30 +44,26 @@ void main()
 	 float ar = u_viewport.x / u_viewport.y;
 	 gl_FragColor = vec4(0.0);
 
-	 vec4 col = vec4(0.0);
 	 for (int clpos = 0; clpos < u_nLights; clpos++){
 	 	 float viewAngle = u_lightViewAngles[clpos];
-		 vec2 deltaTexCoord = (v_texCoords - u_lightPositions[clpos]);
-		 float d1 = length(deltaTexCoord);
 		 
-		 vec2 tc = vec2(v_texCoords);
-
-		 deltaTexCoord *= 1.0 / float(u_numSamples) * u_density;
-		 float illuminationDecay = 1.0;
-		 
-		 vec4 color = texture2D(u_texture0, tc);
-		 
-		 for(int i = 0; i < u_numSamples; i++){
-		    tc -= deltaTexCoord;
-		    vec4 sample = texture2D(u_texture0, tc);
-		    if(len(tc - u_lightPositions[clpos], ar) > viewAngle){
-		    	sample = vec4(0.0, 0.0, 0.0, 0.0);
-		    }
-		    
-		    sample *= illuminationDecay * u_weight;
-		    color += sample;
-		    illuminationDecay *= u_decay;
+		 float lum = 0.0;
+		 for(int idx = 0; idx < n_samples; idx++){
+		 	lum += (texture2D(u_texture0, u_lightPositions[clpos] + vec2(fx(idx * 0.002), fy(idx * 0.002)))).r;
 		 }
-		 gl_FragColor += clamp(color * exposure, 0.0, 1.0);
+		 lum /= n_samples;
+
+		 float size = 1.6 * lum;
+		 
+		 vec2 glow_tc = (v_texCoords - u_lightPositions[clpos]);
+		 glow_tc.x *= ar;
+		 glow_tc /= size;
+		 
+		 glow_tc += 0.5;
+		 
+		 vec4 color_glow = texture2D(u_texture1, glow_tc);
+		
+		 
+		 gl_FragColor = color_glow + viewAngle * 0.0000001;
 	 }
 }

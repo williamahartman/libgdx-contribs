@@ -34,20 +34,10 @@ public final class Glow extends Filter<Glow> {
 
 	private Texture lightGlowTexture;
 
-	private float decay = 0.96815f;
-	private float density = 0.926f;
-	private float weight = 0.58767f;
-
-	private int numSamples = 100;
-
-	/// NUM_SAMPLES will describe the rays quality, you can play with
-	int NUM_SAMPLES = 100;
-
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture("u_texture0", 0), LightGlowTexture("u_texture1", 0), LightPositions("u_lightPositions", 2), LightViewAngles(
-			"u_lightViewAngles", 1), Viewport("u_viewport", 2), NLights("u_nLights",
-				0), Decay("u_decay", 0), Density("u_density", 0), Weight("u_weight", 0), NumSamples("u_numSamples", 0);
+		Texture("u_texture0", 0), LightGlowTexture("u_texture1", 0), LightPositions("u_lightPositions",
+			2), LightViewAngles("u_lightViewAngles", 1), Viewport("u_viewport", 2), NLights("u_nLights", 0);
 		// @formatter:on
 
 		private String mnemonic;
@@ -99,44 +89,8 @@ public final class Glow extends Filter<Glow> {
 		setParam(Param.LightGlowTexture, u_texture1);
 	}
 
-	public float getDecay () {
-		return decay;
-	}
-
-	public float getDensity () {
-		return density;
-	}
-
-	public float getWeight () {
-		return weight;
-	}
-
-	public int getNumSamples () {
-		return numSamples;
-	}
-
 	public Texture getLightGlowTexture () {
 		return lightGlowTexture;
-	}
-
-	public void setDecay (float decay) {
-		this.decay = decay;
-		setParam(Param.Decay, decay);
-	}
-
-	public void setDensity (float density) {
-		this.density = density;
-		setParam(Param.Density, density);
-	}
-
-	public void setWeight (float weight) {
-		this.weight = weight;
-		setParam(Param.Weight, weight);
-	}
-
-	public void setNumSamples (int numSamples) {
-		this.numSamples = numSamples;
-		setParam(Param.NumSamples, numSamples);
 	}
 
 	@Override
@@ -148,10 +102,6 @@ public final class Glow extends Filter<Glow> {
 		setParams(Param.Viewport, viewport);
 		setParamsv(Param.LightPositions, lightPositions, 0, N * 2);
 		setParamsv(Param.LightViewAngles, lightViewAngles, 0, N);
-		setParams(Param.Decay, decay);
-		setParams(Param.Density, density);
-		setParams(Param.Weight, weight);
-		setParams(Param.NumSamples, numSamples);
 		endParams();
 	}
 
