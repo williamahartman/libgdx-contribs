@@ -19,7 +19,7 @@ uniform float u_lightViewAngles[10];
 
 uniform int u_nLights;
 
-#define n_samples 10
+#define n_samples 20
 
 float len(vec2 vect, float ar){
 	return sqrt(vect.x * vect.x * ar * ar + vect.y * vect.y);
@@ -49,7 +49,7 @@ void main()
 		 
 		 float lum = 0.0;
 		 for(int idx = 0; idx < n_samples; idx++){
-		 	lum += (texture2D(u_texture0, u_lightPositions[clpos] + vec2(fx(idx * 0.002), fy(idx * 0.002)))).r;
+		 	lum += (texture2D(u_texture0, u_lightPositions[clpos] + vec2(fx(idx * 0.0015), fy(idx * 0.0015)))).r;
 		 }
 		 lum /= n_samples;
 
