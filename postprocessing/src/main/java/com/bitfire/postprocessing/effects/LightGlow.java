@@ -101,6 +101,14 @@ public final class LightGlow extends PostProcessorEffect {
 		glow.setLightViewAngles(vec);
 	}
 
+	public void setLightColors (float[] vec) {
+		glow.setLightColors(vec);
+	}
+
+	public void setNSamples (int nSamples) {
+		glow.setNSamples(nSamples);
+	}
+
 	public void setBaseIntesity (float intensity) {
 		combine.setSource1Intensity(intensity);
 	}

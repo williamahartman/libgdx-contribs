@@ -25,19 +25,22 @@ import com.bitfire.utils.ShaderLoader;
  * @author Toni Sagrista **/
 public final class Glow extends Filter<Glow> {
 	// Number of light supported
-	public static int N = 10;
+	public static int N = 30;
 	private Vector2 viewport;
 
 	private float[] lightPositions;
 	private float[] lightViewAngles;
+	private float[] lightColors;
 	private int nLights;
+	private int nSamples = 30;
 
 	private Texture lightGlowTexture;
 
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture("u_texture0", 0), LightGlowTexture("u_texture1", 0), LightPositions("u_lightPositions",
-			2), LightViewAngles("u_lightViewAngles", 1), Viewport("u_viewport", 2), NLights("u_nLights", 0);
+		Texture("u_texture0", 0), LightGlowTexture("u_texture1", 0), LightPositions("u_lightPositions", 2), LightViewAngles(
+			"u_lightViewAngles",
+			1), LightColors("u_lightColors", 3), Viewport("u_viewport", 2), NLights("u_nLights", 0), NSamples("u_nSamples", 0);
 		// @formatter:on
 
 		private String mnemonic;
@@ -63,6 +66,7 @@ public final class Glow extends Filter<Glow> {
 		super(ShaderLoader.fromFile("screenspace", "lightglow"));
 		lightPositions = new float[N * 2];
 		lightViewAngles = new float[N];
+		lightColors = new float[N * 3];
 		viewport = new Vector2(width, height);
 		rebind();
 	}
@@ -84,6 +88,16 @@ public final class Glow extends Filter<Glow> {
 		setParamv(Param.LightViewAngles, this.lightViewAngles, 0, N);
 	}
 
+	public void setLightColors (float[] colors) {
+		this.lightColors = colors;
+		setParamv(Param.LightColors, this.lightColors, 0, N * 3);
+	}
+
+	public void setNSamples (int nSamples) {
+		this.nSamples = nSamples;
+		setParam(Param.NSamples, nSamples);
+	}
+
 	public void setLightGlowTexture (Texture tex) {
 		lightGlowTexture = tex;
 		setParam(Param.LightGlowTexture, u_texture1);
@@ -98,10 +112,12 @@ public final class Glow extends Filter<Glow> {
 		// Re-implement super to batch every parameter
 		setParams(Param.Texture, u_texture0);
 		setParams(Param.LightGlowTexture, u_texture1);
-		setParams(Param.NLights, this.nLights);
+		setParams(Param.NLights, nLights);
+		setParams(Param.NSamples, nSamples);
 		setParams(Param.Viewport, viewport);
 		setParamsv(Param.LightPositions, lightPositions, 0, N * 2);
 		setParamsv(Param.LightViewAngles, lightViewAngles, 0, N);
+		setParamsv(Param.LightColors, lightColors, 0, N * 3);
 		endParams();
 	}
 
