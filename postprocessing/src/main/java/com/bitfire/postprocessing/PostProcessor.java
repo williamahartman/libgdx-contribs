@@ -66,7 +66,8 @@ public final class PostProcessor implements Disposable {
 		this(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth, useAlphaChannel, use32Bits);
 	}
 
-	/** Construct a new PostProcessor with the given parameters, defaulting to <em>TextureWrap.ClampToEdge</em> as texture wrap mode */
+	/** Construct a new PostProcessor with the given parameters, defaulting to <em>TextureWrap.ClampToEdge</em> as texture wrap
+	 * mode */
 	public PostProcessor (int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits) {
 		this(fboWidth, fboHeight, useDepth, useAlphaChannel, use32Bits, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 	}
@@ -87,8 +88,8 @@ public final class PostProcessor implements Disposable {
 	}
 
 	/** Construct a new PostProcessor with the given parameters and the specified texture wrap mode */
-	public PostProcessor (int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits,
-		TextureWrap u, TextureWrap v) {
+	public PostProcessor (int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits, TextureWrap u,
+		TextureWrap v) {
 		if (use32Bits) {
 			if (useAlphaChannel) {
 				fbFormat = Format.RGBA8888;
@@ -214,9 +215,9 @@ public final class PostProcessor implements Disposable {
 		this.listener = listener;
 	}
 
-	/** Adds the specified effect to the effect chain and transfer ownership to the PostProcessor, it will manage cleaning it up for
-	 * you. The order of the inserted effects IS important, since effects will be applied in a FIFO fashion, the first added is the
-	 * first being applied. */
+	/** Adds the specified effect to the effect chain and transfer ownership to the PostProcessor, it will manage cleaning it up
+	 * for you. The order of the inserted effects IS important, since effects will be applied in a FIFO fashion, the first added is
+	 * the first being applied. */
 	public void addEffect (PostProcessorEffect effect) {
 		effectsManager.add(effect);
 	}
@@ -354,8 +355,8 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
-	/** Stops capturing the scene and apply the effect chain, if there is one. If the specified output framebuffer is NULL, then the
-	 * rendering will be performed to screen. */
+	/** Stops capturing the scene and apply the effect chain, if there is one. If the specified output framebuffer is NULL, then
+	 * the rendering will be performed to screen. */
 	public void render (FrameBuffer dest) {
 		captureEnd();
 
