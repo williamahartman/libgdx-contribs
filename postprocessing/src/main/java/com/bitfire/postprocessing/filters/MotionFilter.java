@@ -2,6 +2,7 @@
 package com.bitfire.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.bitfire.utils.ShaderLoader;
 
 /** Motion blur filter that draws the last frame (motion filter included) with a lower opacity.
@@ -9,11 +10,14 @@ import com.bitfire.utils.ShaderLoader;
 public class MotionFilter extends Filter<MotionFilter> {
 
 	private float blurOpacity = 0.5f;
+	private float blurRadius = 0.5f;
+	private Vector2 resolution;
 	private Texture lastFrameTex;
 
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture("u_texture0", 0), LastFrame("u_texture1", 0), BlurOpacity("u_blurOpacity", 0);
+		Texture("u_texture0", 0), LastFrame("u_texture1", 0), BlurOpacity("u_blurOpacity", 0), BlurRadius("u_blurRadius",
+			0), Resolution("u_resolution", 2);
 		// @formatter:on
 
 		private String mnemonic;
@@ -37,12 +41,23 @@ public class MotionFilter extends Filter<MotionFilter> {
 
 	public MotionFilter () {
 		super(ShaderLoader.fromFile("screenspace", "motionblur"));
+		resolution = new Vector2();
 		rebind();
 	}
 
 	public void setBlurOpacity (float blurOpacity) {
 		this.blurOpacity = blurOpacity;
 		setParam(Param.BlurOpacity, this.blurOpacity);
+	}
+
+	public void setBlurRadius (float blurRadius) {
+		this.blurRadius = blurRadius;
+		setParam(Param.BlurRadius, this.blurRadius);
+	}
+
+	public void setResolution (int w, int h) {
+		resolution.set(w, h);
+		setParam(Param.Resolution, this.resolution);
 	}
 
 	public void setLastFrameTexture (Texture tex) {
@@ -55,6 +70,8 @@ public class MotionFilter extends Filter<MotionFilter> {
 		setParams(Param.Texture, u_texture0);
 		if (lastFrameTex != null) setParams(Param.LastFrame, u_texture1);
 		setParams(Param.BlurOpacity, this.blurOpacity);
+		setParams(Param.BlurRadius, this.blurRadius);
+		setParams(Param.Resolution, this.resolution);
 		endParams();
 	}
 

@@ -1,6 +1,8 @@
 
 package com.bitfire.postprocessing.effects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.postprocessing.PostProcessorEffect;
@@ -15,13 +17,22 @@ public class MotionBlur extends PostProcessorEffect {
 	private Copy copyFilter;
 	private FrameBuffer fbo;
 
-	public MotionBlur () {
+	public MotionBlur (int width, int height) {
 		motionFilter = new MotionFilter();
+		motionFilter.setResolution(width, height);
 		copyFilter = new Copy();
 	}
 
 	public void setBlurOpacity (float blurOpacity) {
 		motionFilter.setBlurOpacity(blurOpacity);
+	}
+
+	public void setBlurRadius (float blurRadius) {
+		motionFilter.setBlurRadius(blurRadius);
+	}
+
+	public void setResolution (int w, int h) {
+		motionFilter.setResolution(w, h);
 	}
 
 	@Override
@@ -57,6 +68,18 @@ public class MotionBlur extends PostProcessorEffect {
 		// Set last frame
 		motionFilter.setLastFrameTexture(fbo.getColorBufferTexture());
 
+	}
+
+	@Override
+	public void setEnabled (boolean enabled) {
+		super.setEnabled(enabled);
+		// Clean texture if disabled
+		if (!enabled && fbo != null) {
+			fbo.begin();
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
+				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+			fbo.end();
+		}
 	}
 
 }
