@@ -52,7 +52,8 @@ public final class ShaderLoader {
 		ShaderProgram shader = new ShaderProgram(defines + "\n" + vertex, defines + "\n" + fragment);
 
 		if (!shader.isCompiled()) {
-			Gdx.app.error("ShaderLoader", vertexName + "/" + fragmentName + ": " + shader.getLog());
+			Gdx.app.error("ShaderLoader", "Compile error: " + vertexName + "/" + fragmentName);
+			Gdx.app.error("ShaderLoader", shader.getLog());
 			System.exit(-1);
 		}
 
