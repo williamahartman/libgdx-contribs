@@ -28,8 +28,8 @@ public final class FxaaFilter extends Filter<FxaaFilter> {
 
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture("u_texture0", 0), ViewportInverse("u_viewportInverse", 2), FxaaReduceMin("FXAA_REDUCE_MIN", 0), FxaaReduceMul(
-			"FXAA_REDUCE_MUL", 0), FxaaSpanMax("FXAA_SPAN_MAX", 0), ;
+		Texture("u_texture0", 0), ViewportInverse("u_viewportInverse", 2), FxaaReduceMin("FXAA_REDUCE_MIN",
+			0), FxaaReduceMul("FXAA_REDUCE_MUL", 0), FxaaSpanMax("FXAA_SPAN_MAX", 0),;
 		// @formatter:on
 
 		private String mnemonic;

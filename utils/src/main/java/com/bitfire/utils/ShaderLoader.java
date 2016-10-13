@@ -46,12 +46,13 @@ public final class ShaderLoader {
 		return ShaderLoader.fromString(vertex, fragment, vertexName, fragmentName, "");
 	}
 
-	public static ShaderProgram fromString (String vertex, String fragment, String vertexName, String fragmentName, String defines) {
+	public static ShaderProgram fromString (String vertex, String fragment, String vertexName, String fragmentName,
+		String defines) {
 		ShaderProgram.pedantic = ShaderLoader.Pedantic;
 		ShaderProgram shader = new ShaderProgram(defines + "\n" + vertex, defines + "\n" + fragment);
 
 		if (!shader.isCompiled()) {
-			Gdx.app.error("ShaderLoader", shader.getLog());
+			Gdx.app.error("ShaderLoader", vertexName + "/" + fragmentName + ": " + shader.getLog());
 			System.exit(-1);
 		}
 

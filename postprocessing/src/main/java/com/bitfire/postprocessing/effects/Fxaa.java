@@ -43,6 +43,18 @@ public final class Fxaa extends Antialiasing {
 		fxaaFilter.setFxaaSpanMax(value);
 	}
 
+	/** Sets the parameter. The default value is 1/128.
+	 * @param value */
+	public void setReduceMin (float value) {
+		fxaaFilter.setFxaaReduceMin(value);
+	}
+
+	/** Sets the parameter. The default value is 1/8.
+	 * @param value */
+	public void setReduceMul (float value) {
+		fxaaFilter.setFxaaReduceMul(value);
+	}
+
 	@Override
 	public void dispose () {
 		if (fxaaFilter != null) {
