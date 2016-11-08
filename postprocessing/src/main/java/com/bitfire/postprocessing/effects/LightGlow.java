@@ -109,6 +109,10 @@ public final class LightGlow extends PostProcessorEffect {
 		glow.setNSamples(nSamples);
 	}
 
+	public void setTextureScale (float scl) {
+		glow.setTextureScale(scl);
+	}
+
 	public void setBaseIntesity (float intensity) {
 		combine.setSource1Intensity(intensity);
 	}

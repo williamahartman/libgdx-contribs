@@ -33,14 +33,15 @@ public final class Glow extends Filter<Glow> {
 	private float[] lightColors;
 	private int nLights;
 	private int nSamples = 30;
+	private float textureScale = 1f;
 
 	private Texture lightGlowTexture;
 
 	public enum Param implements Parameter {
 		// @formatter:off
 		Texture("u_texture0", 0), LightGlowTexture("u_texture1", 0), LightPositions("u_lightPositions", 2), LightViewAngles(
-			"u_lightViewAngles",
-			1), LightColors("u_lightColors", 3), Viewport("u_viewport", 2), NLights("u_nLights", 0), NSamples("u_nSamples", 0);
+			"u_lightViewAngles", 1), LightColors("u_lightColors",
+				3), Viewport("u_viewport", 2), NLights("u_nLights", 0), NSamples("u_nSamples", 0), TextureScale("u_textureScale", 0);
 		// @formatter:on
 
 		private String mnemonic;
@@ -98,6 +99,11 @@ public final class Glow extends Filter<Glow> {
 		setParam(Param.NSamples, nSamples);
 	}
 
+	public void setTextureScale (float scl) {
+		this.textureScale = scl;
+		setParam(Param.TextureScale, textureScale);
+	}
+
 	public void setLightGlowTexture (Texture tex) {
 		lightGlowTexture = tex;
 		setParam(Param.LightGlowTexture, u_texture1);
@@ -114,6 +120,7 @@ public final class Glow extends Filter<Glow> {
 		setParams(Param.LightGlowTexture, u_texture1);
 		setParams(Param.NLights, nLights);
 		setParams(Param.NSamples, nSamples);
+		setParams(Param.TextureScale, textureScale);
 		setParams(Param.Viewport, viewport);
 		setParamsv(Param.LightPositions, lightPositions, 0, N * 2);
 		setParamsv(Param.LightViewAngles, lightViewAngles, 0, N);
