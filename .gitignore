@@ -1,11 +1,2 @@
-*/bin
-*/release
-*.so
-*.log
-*.iml
-*.class
-*/.ant*
-target/
-.project
-.settings
-.classpath
+/libs/
+*.jar
